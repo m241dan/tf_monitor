@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="tf_monitor" type="tf_monitor_node" name="tf_monitor_node" output="screen"/>
+    <node pkg="tf_monitor" type="static_environment.py"  name="static_environment"/>
+    <test test-name="request_tf_tests" pkg="tf_monitor" type="request_tf.py" />
+</launch>
