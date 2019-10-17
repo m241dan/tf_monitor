@@ -9,6 +9,7 @@ TfMonitor::TfMonitor() : _listener( _buffer )
     _update_timer                   = _nh.createTimer( ros::Duration( 1.0 ), boost::bind( &TfMonitor::updateTimerCb, this, _1 ));
     _request_stamped_topic_tf_srv   = _nh.advertiseService( "/tf_monitor/RequestStampedTopicTf", &TfMonitor::requestStampedTopicTfSrv, this );
     _request_tf_srv                 = _nh.advertiseService( "/tf_monitor/RequestTf", &TfMonitor::requestTfSrv, this );
+    _set_static_tf_srv              = _nh.advertiseService( "/tf_monitor/SetStaticTf", &TfMonitor::setStaticTfSrv, this );
 
 }
 
@@ -60,5 +61,12 @@ bool TfMonitor::requestTfSrv( tf_monitor_msgs::GetTfRequest &req, tf_monitor_msg
         ROS_WARN( "%s", ex.what() );
         return false;
     }
+    return true;
+}
+
+bool TfMonitor::setStaticTfSrv( tf_monitor_msgs::SetStaticTfRequest &req, tf_monitor_msgs::SetStaticTfResponse &res )
+{
+    _static_broadcaster.sendTransform( req.tf );
+    res.success = true;
     return true;
 }
