@@ -3,6 +3,9 @@
 //
 
 #include "../include/tf_monitor/TfMonitor.h"
+#include <algorithm>
+#include <sensor_msgs/PointCloud2.h>
+
 
 TfMonitor::TfMonitor() : _listener( _buffer )
 {
@@ -15,10 +18,9 @@ TfMonitor::TfMonitor() : _listener( _buffer )
 
 void TfMonitor::updateTimerCb( const ros::TimerEvent &event )
 {
-    ros::master::V_TopicInfo topics;
-    ros::master::getTopics( topics );
+    ros::master::getTopics( _topics );
 
-    for( auto &topic : topics )
+    for( auto &topic : _topics )
     {
         if( topic.datatype == TRANSFORM_TYPE )
         {
@@ -37,14 +39,38 @@ bool TfMonitor::requestStampedTopicTfSrv( tf_monitor_msgs::GetStampedTopicTfRequ
 
     if( _transforms.find( key ) == _transforms.end())
     {
-        _transforms.insert(
-                std::make_pair(
-                        key,
-                        std::make_unique<TfFastListener<geometry_msgs::TransformStamped>>(
-                                req.topic_name,
-                                req.out_frame,
-                                req.out_topic_name_recommendation,
-                                _buffer ) ) );
+        std::string type;
+        for( const auto& topic : _topics )
+        {
+            if( topic.name == req.topic_name )
+            {
+                type = topic.datatype;
+                break;
+            }
+        }
+        if( type == "sensor_msgs/PointCloud2" )
+        {
+            _transforms.insert(
+                    std::make_pair(
+                            key,
+                            std::make_unique<TfFastListener<sensor_msgs::PointCloud2>>(
+                                    req.topic_name,
+                                    req.out_frame,
+                                    req.out_topic_name_recommendation,
+                                    _buffer ) ) );
+        }
+        else
+        {
+            _transforms.insert(
+                    std::make_pair(
+                            key,
+                            std::make_unique<TfFastListener<geometry_msgs::TransformStamped>>(
+                                    req.topic_name,
+                                    req.out_frame,
+                                    req.out_topic_name_recommendation,
+                                    _buffer ) ) );
+        }
+
     }
     res.out_topic_name = _transforms[key]->GetOutTopicName();
     return true;

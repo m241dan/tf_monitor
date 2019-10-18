@@ -10,6 +10,8 @@
 #include <tf2_ros/transform_listener.h>
 #include <message_filters/subscriber.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_sensor_msgs/tf2_sensor_msgs.h>
+#include <tf2/transform_datatypes.h>
 #include <string>
 
 
@@ -31,7 +33,6 @@ public:
             _out_topic_name = topic_name + "_in_" + out_frame;
         else
             _out_topic_name = out_topic_name_recommendation;
-        _pub            = _nh.advertise<geometry_msgs::TransformStamped>( _out_topic_name, 1, true );
     }
 
     std::string GetTopic()
@@ -64,6 +65,7 @@ public:
             : TfFastListenerBase( topic_name, out_frame, out_topic_name_recommendation, buffer ),
               _filter( _sub, _buffer, out_frame, 10, 0 )
     {
+        _pub            = _nh.advertise<M>( _out_topic_name, 1, true );
         _sub.subscribe( _nh, _topic_name, 10 );
         _filter.registerCallback( boost::bind( &TfFastListener::tfCb, this, _1 ));
     }

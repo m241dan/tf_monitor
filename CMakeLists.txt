@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
   roscpp
   tf2_geometry_msgs
+  tf2_sensor_msgs
   tf2_ros
   tf_monitor_msgs
 )
@@ -108,7 +109,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES tf_monitor
-  CATKIN_DEPENDS geometry_msgs message_filters roscpp tf2_geometry_msgs tf2_ros tf_monitor_msgs
+  CATKIN_DEPENDS geometry_msgs message_filters roscpp tf2_geometry_msgs tf2_sensor_msgs tf2_ros tf_monitor_msgs
 #  DEPENDS system_lib
 )
 

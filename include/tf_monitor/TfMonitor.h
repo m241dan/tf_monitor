@@ -43,6 +43,9 @@ private:
     ros::NodeHandle _nh;
     ros::Timer _update_timer;
 
+    // ROS Topics List
+    ros::master::V_TopicInfo _topics;
+
     // ROS TF2
     tf2_ros::Buffer _buffer;
     tf2_ros::TransformListener _listener;
